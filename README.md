@@ -13,7 +13,9 @@ Currently WASE contains the following parts:
 ## ElasticBurp
 
 Scared about the weak searching performance of Burp Suite? Are you missing possibilities to search in Burp? ElasticBurp
-combines Burp Suite with the search power of ElasticSearch.
+combines Burp Suite with the search power of ElasticSearch. It can be installed directly from the [Burp BApp
+Store](https://portswigger.net/bappstore/ShowBappDetails.aspx?uuid=67f5c31f93d04ad3a3b0a1808b3648fa).
+
 
 ### Installation
 
@@ -21,10 +23,9 @@ combines Burp Suite with the search power of ElasticSearch.
 2. Configure both - For security reasons it is recommend to let them listen on localhost:
   * Set `network.host: 127.0.0.1` in `/etc/elasticsearch/elasticsearch.yml`.
   * Set `host: "127.0.0.1"` in `/opt/kibana/config/kibana.yml`.
-3. Load ElasticBurp.py as Python extension in Burp Extender.
-  * The setting *Folder for loading modules* in Extender Options must be set to WASE source root (for doc_HttpRequestResponse)
-  * tzlocal, elasticsearch and elasticsearch_dsl must be installed in the used Jython/Python environment. It is important that
-  the packages are installed with *pip* from the Jython binary directory.
+3. Install dependencies in the Jython environment used by Burp Extender with: `$JYTHON_PATH/bin/pip install -r
+   requirements.txt`
+4. Load ElasticBurp.py as Python extension in Burp Extender.
 
 Currently there seem to be incompatibilities with the new Python Elasticsearch packages. Specify the 2.2 version when installing
 with pip: `$JYTHON_HOME/bin/pip install elasticsearch_dsl==2.2`

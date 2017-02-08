@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from elasticsearch_dsl import DocType, String, Integer, Short, Date, Object, Nested, MetaField, analyzer
+from elasticsearch_dsl import DocType, Text, Keyword, Integer, Short, Date, Object, Nested, MetaField, analyzer
 from datetime import datetime
 import re
 from WASEHTMLParser import WASEHTMLParser
@@ -40,73 +40,72 @@ identifierAnalyzer = analyzer("identifier",
 
 class DocHTTPRequestResponse(DocType):
     class Meta:
-        #index = "wase"
         doc_type = 'HTTPRequestResponse'
 
     timestamp = Date()
-    protocol = String()
-    host = String(index='not_analyzed')
+    protocol = Keyword()
+    host = Keyword()
     port = Integer()
     request = Object(
             properties = {
-                'method': String(index='not_analyzed'),
-                'url': String(fields={'raw': String(index='not_analyzed')}),
-                'requestline': String(fields={'raw': String(index='not_analyzed')}),
-                'content_type': String(fields={'raw': String(index='not_analyzed')}),
-                'headernames': String(analyzer=identifierAnalyzer, multi=True, fields={'raw': String(index='not_analyzed')}),
+                'method': Keyword(),
+                'url': Text(fields={'keyword': Keyword()}),
+                'requestline': Text(fields={'keyword': Keyword()}),
+                'content_type': Text(fields={'keyword': Keyword()}),
+                'headernames': Text(analyzer=identifierAnalyzer, multi=True, fields={'keyword': Keyword()}),
                 'headers': Nested(
                     properties = {
-                        'name': String(analyzer=identifierAnalyzer, fields={'raw': String(index='not_analyzed')}),
-                        'value': String(fields={'raw': String(index='not_analyzed')})
+                        'name': Text(analyzer=identifierAnalyzer, fields={'keyword': Keyword()}),
+                        'value': Text(fields={'keyword': Keyword()})
                         }
                     ),
-                'parameternames': String(analyzer=identifierAnalyzer, multi=True, fields={'raw': String(index='not_analyzed')}),
+                'parameternames': Text(analyzer=identifierAnalyzer, multi=True, fields={'keyword': Keyword()}),
                 'parameters': Nested(
                     properties = {
-                        'type': String(index='not_analyzed'),
-                        'name': String(analyzer=identifierAnalyzer, fields={'raw': String(index='not_analyzed')}),
-                        'value': String(fields={'raw': String(index='not_analyzed')})
+                        'type': Keyword(),
+                        'name': Text(analyzer=identifierAnalyzer, fields={'keyword': Keyword()}),
+                        'value': Text(fields={'keyword': Keyword()})
                         }
                     ),
-                'body': String(include_in_all=False)
+                'body': Text(include_in_all=False)
                 }
             )
     response = Object(
             properties = {
                 'status': Short(),
-                'responseline': String(fields={'raw': String(index='not_analyzed')}),
-                'content_type': String(fields={'raw': String(index='not_analyzed')}),
-                'inferred_content_type': String(fields={'raw': String(index='not_analyzed')}),
-                'headernames': String(analyzer=identifierAnalyzer, multi=True, fields={'raw': String(index='not_analyzed')}),
+                'responseline': Text(fields={'keyword': Keyword()}),
+                'content_type': Text(fields={'keyword': Keyword()}),
+                'inferred_content_type': Text(fields={'keyword': Keyword()}),
+                'headernames': Text(analyzer=identifierAnalyzer, multi=True, fields={'keyword': Keyword()}),
                 'headers': Nested(
                     properties = {
-                        'name': String(analyzer=identifierAnalyzer, fields={'raw': String(index='not_analyzed')}),
-                        'value': String(fields={'raw': String(index='not_analyzed')})
+                        'name': Text(analyzer=identifierAnalyzer, fields={'keyword': Keyword()}),
+                        'value': Text(fields={'keyword': Keyword()})
                         }
                     ),
-                'cookienames': String(analyzer=identifierAnalyzer, multi=True, fields={'raw': String(index='not_analyzed')}),
+                'cookienames': Text(analyzer=identifierAnalyzer, multi=True, fields={'keyword': Keyword()}),
                 'cookies': Nested(
                     properties = {
-                        'domain': String(fields={'raw': String(index='not_analyzed')}),
-                        'expiration': Date(fields={'raw': String(index='not_analyzed')}),
-                        'name': String(analyzer=identifierAnalyzer, fields={'raw': String(index='not_analyzed')}),
-                        'path': String(fields={'raw': String(index='not_analyzed')}),
-                        'value': String(fields={'raw': String(index='not_analyzed')})
+                        'domain': Text(fields={'keyword': Keyword()}),
+                        'expiration': Date(fields={'keyword': Keyword()}),
+                        'name': Text(analyzer=identifierAnalyzer, fields={'keyword': Keyword()}),
+                        'path': Text(fields={'keyword': Keyword()}),
+                        'value': Text(fields={'keyword': Keyword()})
                         }
                     ),
-                'body': String(include_in_all=False),
-                'doctype': String(multi=True, fields={'raw': String(index='not_analyzed')}),
-                'base': String(multi=True, fields={'raw': String(index='not_analyzed')}),
-                'stylesheets': String(multi=True, fields={'raw': String(index='not_analyzed')}),
-                'frames': String(multi=True, fields={'raw': String(index='not_analyzed')}),
-                'scripts': String(multi=True, fields={'raw': String(index='not_analyzed')}),
-                'links': String(multi=True, fields={'raw': String(index='not_analyzed')}),
-                'images': String(multi=True, fields={'raw': String(index='not_analyzed')}),
-                'audio': String(multi=True, fields={'raw': String(index='not_analyzed')}),
-                'video': String(multi=True, fields={'raw': String(index='not_analyzed')}),
-                'objects': String(multi=True, fields={'raw': String(index='not_analyzed')}),
-                'formactions': String(multi=True, fields={'raw': String(index='not_analyzed')}),
-                'extrefs': String(multi=True, fields={'raw': String(index='not_analyzed')}),    # all external references
+                'body': Text(include_in_all=False),
+                'doctype': Text(multi=True, fields={'keyword': Keyword()}),
+                'base': Text(multi=True, fields={'keyword': Keyword()}),
+                'stylesheets': Text(multi=True, fields={'keyword': Keyword()}),
+                'frames': Text(multi=True, fields={'keyword': Keyword()}),
+                'scripts': Text(multi=True, fields={'keyword': Keyword()}),
+                'links': Text(multi=True, fields={'keyword': Keyword()}),
+                'images': Text(multi=True, fields={'keyword': Keyword()}),
+                'audio': Text(multi=True, fields={'keyword': Keyword()}),
+                'video': Text(multi=True, fields={'keyword': Keyword()}),
+                'objects': Text(multi=True, fields={'keyword': Keyword()}),
+                'formactions': Text(multi=True, fields={'keyword': Keyword()}),
+                'extrefs': Text(multi=True, fields={'keyword': Keyword()}),    # all external references
                 }
             )
 

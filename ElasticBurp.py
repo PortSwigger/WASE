@@ -46,7 +46,7 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
 
         self.lastTimestamp = None
         self.confESHost = ES_host
-        self.confESIndex = ES_index
+        self.confESIndex = self.callbacks.loadExtensionSetting("elasticburp.index") or ES_index
         self.confBurpTools = Burp_Tools
         self.confBurpOnlyResp = Burp_onlyResponses
 
@@ -57,13 +57,13 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
         try:
             print("Connecting to '%s', index '%s'" % (self.confESHost, self.confESIndex))
             res = connections.create_connection(hosts=[self.confESHost])
-            idx = Index(self.confESIndex)
-            idx.doc_type(DocHTTPRequestResponse)
-            DocHTTPRequestResponse.init()
-            try:
-                idx.create()
-            except:
-                pass
+            self.idx = Index(self.confESIndex)
+            self.idx.doc_type(DocHTTPRequestResponse)
+            if self.idx.exists():
+                self.idx.open()
+            else:
+                self.idx.create()
+            self.callbacks.saveExtensionSetting("elasticburp.index", self.confESIndex)
         except Exception as e:
             JOptionPane.showMessageDialog(self.panel, "<html><p style='width: 300px'>Error while initializing ElasticSearch: %s</p></html>" % (str(e)), "Error", JOptionPane.ERROR_MESSAGE)
 
@@ -72,6 +72,7 @@ class BurpExtender(IBurpExtender, IHttpListener, IContextMenuFactory, ITab):
         return "ElasticBurp"
 
     def applyConfigUI(self, event):
+        #self.idx.close()
         self.confESHost = self.uiESHost.getText()
         self.confESIndex = self.uiESIndex.getText()
         self.confBurpTools = (self.uiCBSuite.isSelected() and IBurpExtenderCallbacks.TOOL_SUITE) | (self.uiCBTarget.isSelected() and IBurpExtenderCallbacks.TOOL_TARGET) | (self.uiCBProxy.isSelected() and IBurpExtenderCallbacks.TOOL_PROXY) | (self.uiCBSpider.isSelected() and IBurpExtenderCallbacks.TOOL_SPIDER) | (self.uiCBScanner.isSelected() and IBurpExtenderCallbacks.TOOL_SCANNER) | (self.uiCBIntruder.isSelected() and IBurpExtenderCallbacks.TOOL_INTRUDER) | (self.uiCBRepeater.isSelected() and IBurpExtenderCallbacks.TOOL_REPEATER) | (self.uiCBSequencer.isSelected() and IBurpExtenderCallbacks.TOOL_SEQUENCER) | (self.uiCBExtender.isSelected() and IBurpExtenderCallbacks.TOOL_EXTENDER)

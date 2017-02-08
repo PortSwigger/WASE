@@ -14,7 +14,7 @@ QUERY_VALUES = 2
 ### Helpers ###
 
 def add_default_aggregation(s):
-    a = A("terms", field="request.url.raw", size=0)
+    a = A("terms", field="request.url.keyword", size=args.size)
     s.aggs.bucket("urls", a)
 
 def add_domain_filter(s):
@@ -67,7 +67,7 @@ def query_missingparam(s, paramname, methods=None, responsecodes=None, invert=Fa
 def query_vals(s, field, name, values, invert):
     # match documents where given field value name is present, if required
     if values:
-        q = Q("nested", path=field, query=Q("wildcard", ** { field + ".value.raw": values }))
+        q = Q("nested", path=field, query=Q("wildcard", ** { field + ".value.keyword": values }))
         if invert:
             s.query = ~q
         else:
@@ -82,9 +82,9 @@ def query_vals(s, field, name, values, invert):
     # 5. aggregate URLs
     s.aggs.bucket("field", "nested", path=field)\
             .bucket("valuefilter", "filter", Q("match", ** { field + ".name": name }))\
-            .bucket("values", "terms", field=field + ".value.raw", size=0)\
+            .bucket("values", "terms", field=field + ".value.keyword", size=args.size)\
             .bucket("main", "reverse_nested")\
-            .bucket("urls", "terms", field="request.url.raw", size=0)
+            .bucket("urls", "terms", field="request.url.keyword", size=args.size)
     return s
 
 def query_responseheadervals(s, headername, values=None, invert=False):
@@ -107,6 +107,7 @@ def query(s, q):
 argparser = argparse.ArgumentParser(description="WASE Query Tool")
 argparser.add_argument("--server", "-s", default="localhost", help="ElasticSearch server")
 argparser.add_argument("--index", "-i", default="wase-*", help="ElasticSearch index pattern to query")
+argparser.add_argument("--size", "-S", default=10000, type=int, help="Maximum number of results of aggregation (default: %(default)s)")
 argparser.add_argument("--field", "-f", action="append", help="Add fields to output. Prints full result instead of aggregated URLs.")
 argparser.add_argument("--domain", "-d", action="append", help="Restrict search to domain. Wildcards allowed. Can be used multiple times.")
 argparser.add_argument("--debug", "-D", action="store_true", help="Debugging output")

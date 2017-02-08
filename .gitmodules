@@ -1,6 +1,0 @@
-[submodule "elasticsearch-py"]
-	path = elasticsearch-py
-	url = https://github.com/elastic/elasticsearch-py.git
-[submodule "elasticsearch-dsl-py"]
-	path = elasticsearch-dsl-py
-	url = https://github.com/elastic/elasticsearch-dsl-py.git
