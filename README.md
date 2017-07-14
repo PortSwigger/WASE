@@ -38,6 +38,8 @@ See [this blog article](https://patzke.org/an-introduction-to-wase-and-elasticbu
 
 A generic intercepting HTTP(S) proxy server that stores extracted data into an ElasticSearch index.
 
+Installation with pip: `pip install -r requirements-proxy.txt`
+
 ## WASEQuery
 
 Search ElasticSearch indices created by WASE for

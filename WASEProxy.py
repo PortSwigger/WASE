@@ -42,7 +42,7 @@ class WASEProxyHandler(ProxyHandler):
             scheme = "http"
         url = scheme + "://" + self.hostname
         if scheme == "http" and int(self.port) != 80 or scheme == "https" and int(self.port) != 443:
-            url += ":" + self.port
+            url += ":" + str(self.port)
         url += self.path
 
         if args.verbose:

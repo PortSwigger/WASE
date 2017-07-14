@@ -1,0 +1,7 @@
+cryptography==1.8.1
+elasticsearch==5.1.0
+elasticsearch-dsl==5.1.0
+pymiproxy==1.0
+pyparsing==2.2.0
+six==1.10.0
+tzlocal==1.3
